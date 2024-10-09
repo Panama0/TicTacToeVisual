@@ -1,9 +1,9 @@
-workspace "test"
+workspace "TicTacToeVisual"
     configurations {"Debug", "Release"}
     architecture "x64"
     location "./"
 
-    project "test"
+    project "TicTacToeVisual"
         kind "ConsoleApp"
         language "C++"
         cppdialect "C++17"

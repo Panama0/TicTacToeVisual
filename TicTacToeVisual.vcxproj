@@ -11,10 +11,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{65689E7C-519F-9F0D-FA8B-8510E6A11B0F}</ProjectGuid>
+    <ProjectGuid>{1912222C-859D-8FF0-8EAE-12E5FAB8EBF0}</ProjectGuid>
     <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>test</RootNamespace>
+    <RootNamespace>TicTacToeVisual</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -43,14 +43,14 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>bin\</OutDir>
     <IntDir>bin\obj\Debug\</IntDir>
-    <TargetName>test</TargetName>
+    <TargetName>TicTacToeVisual</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>bin\</OutDir>
     <IntDir>bin\obj\Release\</IntDir>
-    <TargetName>test</TargetName>
+    <TargetName>TicTacToeVisual</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -58,7 +58,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>DEBUG;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>lib\imgui;lib\sfml;lib\sfml\include;lib\sfml\lib;lib\sfml\include\SFML;lib\sfml\include\SFML\Audio;lib\sfml\include\SFML\Graphics;lib\sfml\include\SFML\Network;lib\sfml\include\SFML\System;lib\sfml\include\SFML\Window;lib\sfml\lib\cmake;lib\sfml\lib\Debug;lib\sfml\lib\Release;lib\sfml\lib\cmake\SFML;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>lib\imgui;lib\sfml;lib\sfml\include;lib\sfml\lib;lib\sfml\include\SFML;lib\sfml\include\SFML\Audio;lib\sfml\include\SFML\Graphics;lib\sfml\include\SFML\Network;lib\sfml\include\SFML\System;lib\sfml\include\SFML\Window;lib\sfml\lib\cmake;lib\sfml\lib\cmake\SFML;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -76,7 +76,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>lib\imgui;lib\sfml;lib\sfml\include;lib\sfml\lib;lib\sfml\include\SFML;lib\sfml\include\SFML\Audio;lib\sfml\include\SFML\Graphics;lib\sfml\include\SFML\Network;lib\sfml\include\SFML\System;lib\sfml\include\SFML\Window;lib\sfml\lib\cmake;lib\sfml\lib\Debug;lib\sfml\lib\Release;lib\sfml\lib\cmake\SFML;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>lib\imgui;lib\sfml;lib\sfml\include;lib\sfml\lib;lib\sfml\include\SFML;lib\sfml\include\SFML\Audio;lib\sfml\include\SFML\Graphics;lib\sfml\include\SFML\Network;lib\sfml\include\SFML\System;lib\sfml\include\SFML\Window;lib\sfml\lib\cmake;lib\sfml\lib\cmake\SFML;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -96,10 +96,24 @@
   <ItemGroup>
     <ClCompile Include="lib\imgui\imgui-SFML.cpp" />
     <ClCompile Include="lib\imgui\imgui.cpp" />
+    <ClCompile Include="lib\imgui\imgui_demo.cpp" />
     <ClCompile Include="lib\imgui\imgui_draw.cpp" />
     <ClCompile Include="lib\imgui\imgui_tables.cpp" />
     <ClCompile Include="lib\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="lib\imgui\imconfig-SFML.h" />
+    <ClInclude Include="lib\imgui\imconfig.h" />
+    <ClInclude Include="lib\imgui\imgui-SFML.h" />
+    <ClInclude Include="lib\imgui\imgui-SFML_export.h" />
+    <ClInclude Include="lib\imgui\imgui.h" />
+    <ClInclude Include="lib\imgui\imgui_internal.h" />
+    <ClInclude Include="lib\imgui\imstb_rectpack.h" />
+    <ClInclude Include="lib\imgui\imstb_textedit.h" />
+    <ClInclude Include="lib\imgui\imstb_truetype.h" />
+    <ClInclude Include="src\Game.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
