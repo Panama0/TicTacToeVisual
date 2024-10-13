@@ -1,17 +1,15 @@
 #pragma once
-#include "ResourceManager.h"
 #include "SFML/Graphics.hpp"
+#include "ResourceManager.h"
 #include <array>
+#include <optional>
 
+
+//stores state only
 class Game
 {
 public:
-	enum Peice
-	{
-		empty,
-		X,
-		O,
-	};
+	enum Peice;
 	using Board = std::array<std::array<Peice, 3>, 3>;
 	using BoardPos = std::array<std::array<sf::Vector2f, 3>, 3>;
 
@@ -24,11 +22,13 @@ public:
 	void drawBoard();
 	void loadBoard();
 
+	std::optional<const char*> Game::getPath(Game::Peice asset);
+
 private:
 	sf::RenderWindow m_window{};
 	Board m_boardState{};
 	BoardPos m_boardGrid{};
 	sf::Clock m_deltaClock{};
 
-	GameObj m_tiles[9];
+	ResMan m_resources;
 };

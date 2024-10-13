@@ -33,6 +33,7 @@
     <ClCompile Include="lib\imgui\imgui_demo.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\ResourceManager.cpp" />
+    <ClCompile Include="src\GameObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib\imgui\imconfig.h" />
@@ -46,5 +47,6 @@
     <ClInclude Include="lib\imgui\imstb_truetype.h" />
     <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\ResourceManager.h" />
+    <ClInclude Include="src\GameObject.h" />
   </ItemGroup>
 </Project>

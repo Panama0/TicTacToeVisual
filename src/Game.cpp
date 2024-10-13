@@ -1,8 +1,16 @@
 #include "Game.h"
-#include "ResourceManager.h"
 #include "imgui.h"
 #include "SFML/Graphics.hpp"
 #include <iostream>
+#include <optional>
+
+enum Game::Peice
+{
+	empty,
+	X,
+	O,
+	tile,
+};
 
 Game::Game()
 {
@@ -72,8 +80,8 @@ void Game::drawBoard()
 		{
 			for (int j{}; j < 3; j++)
 			{
-				m_tiles[k].sprite.setPosition(m_boardGrid[i][j]);
-				m_window.draw(m_tiles[k].sprite);
+				m_resources.tiles[k].sprite.setPosition(m_boardGrid[i][j]);
+				m_window.draw(m_resources.tiles[k].sprite);
 				k++;
 			}
 		}
@@ -97,8 +105,34 @@ void Game::loadBoard()
 		}
 	}
 
-	for (int i{}; i < 9; i++)
+	
+
+	std::optional<std::string> path;
+	if (path = getPath(Peice::tile))
 	{
-		m_tiles[i].loadTexture("./res/sq.png");
+		m_resources.loadTiles(9, *path);
+	}
+	else
+	{
+		std::cerr << "Could not load texture!";
+	}
+}
+
+std::optional<const char*> Game::getPath(Game::Peice asset)
+{
+	switch (asset)
+	{
+	case Game::X:
+		break;
+	case Game::O:
+		return "./res/o.png";
+		break;
+	case Game::tile:
+		return "./res/sq.png";
+		break;
+	default:
+		std::cerr << "Invalid asset, could not get path!";
+		return std::nullopt;
+		break;
 	}
 }
