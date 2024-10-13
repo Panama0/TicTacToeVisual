@@ -4,6 +4,13 @@
 #include <array>
 #include <optional>
 
+//TODO: make this better, surely theres a better way to have these consts.
+struct GridDim
+{
+	const int colWidth{ 20 };
+	const int spriteSize{ 256 };
+	const int gridSize{ 3 };
+};
 
 //stores state only
 class Game
@@ -29,6 +36,7 @@ private:
 	Board m_boardState{};
 	BoardPos m_boardGrid{};
 	sf::Clock m_deltaClock{};
+	GridDim grid;
 
 	ResMan m_resources;
 };
