@@ -5,11 +5,12 @@
 #include <optional>
 
 //TODO: make this better, surely theres a better way to have these consts.
-struct GridDim
+namespace GridDim
 {
 	const int colWidth{ 20 };
 	const int spriteSize{ 256 };
 	const int gridSize{ 3 };
+	constexpr int gridSquares{ gridSize * gridSize };
 };
 
 //stores state only
@@ -27,16 +28,18 @@ public:
 	void draw();
 	void drawUI();
 	void drawBoard();
+	void drawPeices();
 	void loadBoard();
+	void placePeice(Peice peice, sf::Vector2i location);
 
 	std::optional<const char*> Game::getPath(Game::Peice asset);
 
 private:
 	sf::RenderWindow m_window{};
 	Board m_boardState{};
+	Peice turn{};		// default is for X to start
 	BoardPos m_boardGrid{};
 	sf::Clock m_deltaClock{};
-	GridDim grid;
 
 	ResMan m_resources;
 };

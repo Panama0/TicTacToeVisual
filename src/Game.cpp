@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "imgui.h"
+#include "Utils.h"
 #include "SFML/Graphics.hpp"
 #include <iostream>
 #include <optional>
@@ -14,6 +15,7 @@ enum Game::Peice
 
 
 Game::Game()
+	:turn{Peice::X}
 {
 	sf::ContextSettings settings;
 	settings.antialiasingLevel = 8;
@@ -45,19 +47,25 @@ void Game::handleInput()
 		if (event.type == sf::Event::MouseButtonReleased)
 		{
 			sf::Vector2f mousePos{ static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y) };
+			sf::FloatRect CurrentTileBounds;
+			sf::Vector2i clickCoords{};
 
 			for (int i{}; i < 9; i++)
 			{
-				sf::FloatRect bounds{ m_resources.tiles[i].sprite.getGlobalBounds()};
-				bounds.height -= grid.colWidth*2;
-				bounds.width -= grid.colWidth*2;
-				bounds.left += grid.colWidth;
-				bounds.top += grid.colWidth;
-				if (bounds.contains(mousePos))
+				//check if click collides
+				CurrentTileBounds = m_resources.tiles[i].getClickbox();
+				if (CurrentTileBounds.contains(mousePos))
 				{
-					std::cout << i;
+					clickCoords = remap1Dto2D(i);
+					if (turn == Peice::X && m_boardState[clickCoords.x][clickCoords.y] == Peice::empty)
+					{
+						//create a new spr for the X
+						m_resources.addSpr(*getPath(Peice::X));
+						//edit state
+						placePeice(Peice::X, clickCoords);
+						turn = Peice::O;
+					}
 				}
-
 			}
 		}
 		if (event.type == sf::Event::MouseMoved)
@@ -66,12 +74,7 @@ void Game::handleInput()
 
 			for (int i{}; i < 9; i++)
 			{
-				//TODO: surely we can make this use the gridpos member var instrad of all this bounds checking
-				sf::FloatRect bounds{ m_resources.tiles[i].sprite.getGlobalBounds() };
-				bounds.height -= grid.colWidth * 2;
-				bounds.width -= grid.colWidth * 2;
-				bounds.left += grid.colWidth;
-				bounds.top += grid.colWidth;
+				sf::FloatRect bounds{ m_resources.tiles[i].getClickbox()};
 				if (bounds.contains(mousePos))
 				{
 					m_resources.highlight.setSize({ bounds.height, bounds.width });
@@ -100,6 +103,7 @@ void Game::draw()
 	m_window.clear({120,120,120});
 	drawBoard();
 	drawUI();
+	drawPeices();
 	m_window.draw(m_resources.highlight);
 	m_window.display();
 }
@@ -112,8 +116,8 @@ void Game::drawUI()
 	{
 		if (ImGui::BeginMenu("Options"))
 		{
-			if (ImGui::MenuItem("New Game", "CTRL+R")) {}
-			if (ImGui::MenuItem("Exit", "CTRL+R")) {}
+			if (ImGui::MenuItem("New Game")) {}
+			if (ImGui::MenuItem("Exit")) {}
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();
@@ -138,21 +142,46 @@ void Game::drawBoard()
 	}
 }
 
+void Game::drawPeices()
+{
+	int counter{};
+	for (int i{}; i < GridDim::gridSquares; i++)
+	{
+		sf::Vector2i remapI{ remap1Dto2D(i) };
+				//test
+
+		switch (m_boardState[remapI.x][remapI.y])
+		{
+		case Peice::X:
+			m_resources.PeicesX[counter].sprite.setPosition(m_boardGrid[remapI.x][remapI.y]);
+			m_window.draw(m_resources.PeicesX[counter].sprite);
+			counter++;
+			break;
+		case Peice::O:
+			m_resources.PeicesO[counter].sprite.setPosition(m_boardGrid[remapI.x][remapI.y]);
+			m_window.draw(m_resources.PeicesO[counter].sprite);
+			counter++;
+			break;
+		default:
+			break;
+		}
+	}
+}
+
 void Game::loadBoard()
 {
-
-
-	const sf::Vector2f offset{ static_cast<float>(grid.colWidth + m_window.getSize().x/2 - (grid.gridSize * grid.spriteSize)/2),
-							   static_cast<float>(grid.colWidth + m_window.getSize().y/2 - (grid.gridSize * grid.spriteSize)/2)};
+	const sf::Vector2f offset{ static_cast<float>(GridDim::colWidth + m_window.getSize().x/2 - (GridDim::gridSize * GridDim::spriteSize)/2),
+							   static_cast<float>(GridDim::colWidth + m_window.getSize().y/2 - (GridDim::gridSize * GridDim::spriteSize)/2)};
 
 	for (int i{}; i < 3; i++)
 	{
 		for (int j{}; j < 3; j++)
 		{
-			m_boardGrid[i][j] = { offset.x + i * (grid.spriteSize - grid.colWidth), offset.y + j * (grid.spriteSize - grid.colWidth) };
+			m_boardGrid[j][i] = { offset.x + i * (GridDim::spriteSize - GridDim::colWidth), offset.y + j * (GridDim::spriteSize - GridDim::colWidth) };
 		}
 	}
 
+	//TODO:move to resman
 	std::optional<std::string> path;
 	if (path = getPath(Peice::tile))
 	{
@@ -164,11 +193,17 @@ void Game::loadBoard()
 	}
 }
 
+void Game::placePeice(Peice peice, sf::Vector2i location)
+{
+	m_boardState[location.x][location.y] = peice;
+}
+
 std::optional<const char*> Game::getPath(Game::Peice asset)
 {
 	switch (asset)
 	{
 	case Game::X:
+		return "./res/x.png";
 		break;
 	case Game::O:
 		return "./res/o.png";
