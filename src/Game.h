@@ -17,7 +17,14 @@ namespace GridDim
 class Game
 {
 public:
-	enum Peice;
+	enum Peice
+	{
+		empty,
+		X,
+		O,
+		tile,
+	};
+
 	using Board = std::array<std::array<Peice, 3>, 3>;
 	using BoardPos = std::array<std::array<sf::Vector2f, 3>, 3>;
 
@@ -37,7 +44,7 @@ public:
 private:
 	sf::RenderWindow m_window{};
 	Board m_boardState{};
-	Peice turn{};		// default is for X to start
+	Peice m_turn{ Peice::X };		// default is for X to start
 	BoardPos m_boardGrid{};
 	sf::Clock m_deltaClock{};
 

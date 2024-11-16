@@ -16,4 +16,5 @@ void ResMan::loadTiles(const int num, std::string_view path)
 void ResMan::addSpr(const char* path)
 {
 	PeicesX.emplace_back().loadTexture(path);
+	PeicesO.emplace_back().loadTexture(path);
 }

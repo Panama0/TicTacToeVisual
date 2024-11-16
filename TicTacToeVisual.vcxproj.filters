@@ -34,6 +34,7 @@
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\ResourceManager.cpp" />
     <ClCompile Include="src\GameObject.cpp" />
+    <ClCompile Include="src\AiPlayer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib\imgui\imconfig.h" />
@@ -49,5 +50,6 @@
     <ClInclude Include="src\ResourceManager.h" />
     <ClInclude Include="src\GameObject.h" />
     <ClInclude Include="src\Utils.h" />
+    <ClInclude Include="src\AiPlayer.h" />
   </ItemGroup>
 </Project>

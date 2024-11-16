@@ -1,21 +1,15 @@
 #include "Game.h"
 #include "imgui.h"
 #include "Utils.h"
+#include "AiPlayer.h"
 #include "SFML/Graphics.hpp"
 #include <iostream>
 #include <optional>
 
-enum Game::Peice
-{
-	empty,
-	X,
-	O,
-	tile,
-};
+
 
 
 Game::Game()
-	:turn{Peice::X}
 {
 	sf::ContextSettings settings;
 	settings.antialiasingLevel = 8;
@@ -30,10 +24,29 @@ void Game::run()
 {
 	while (m_window.isOpen())
 	{
+#define debug
+#ifdef debug1
+		Board debugBoard = { {{{ Peice::O,		Peice::O,		Peice::empty }},
+							  {{ Peice::X,		Peice::X,		Peice::empty }},
+							  {{ Peice::empty,	Peice::empty,	Peice::empty }}}};;
+		AiPlayer ai(&debugBoard);
+		ai.makeMove();
+#endif // debug1
+
+		//temp?
+		AiPlayer ai(&m_boardState);
+
 		//process input
 		handleInput();
 		//update stuff
 
+		//TODO: move the below
+		if (m_turn == Game::Peice::O)
+		{
+			ai.makeMove();
+			m_resources.addSpr(*getPath(Peice::O));
+			m_turn = Game::Peice::X;
+		}
 		//draw stuff
 		draw();
 	}
@@ -57,13 +70,10 @@ void Game::handleInput()
 				if (CurrentTileBounds.contains(mousePos))
 				{
 					clickCoords = remap1Dto2D(i);
-					if (turn == Peice::X && m_boardState[clickCoords.x][clickCoords.y] == Peice::empty)
+					if (m_turn == Peice::X && m_boardState[clickCoords.x][clickCoords.y] == Peice::empty)
 					{
-						//create a new spr for the X
-						m_resources.addSpr(*getPath(Peice::X));
-						//edit state
 						placePeice(Peice::X, clickCoords);
-						turn = Peice::O;
+						m_turn = Peice::O;
 					}
 				}
 			}
@@ -148,7 +158,6 @@ void Game::drawPeices()
 	for (int i{}; i < GridDim::gridSquares; i++)
 	{
 		sf::Vector2i remapI{ remap1Dto2D(i) };
-				//test
 
 		switch (m_boardState[remapI.x][remapI.y])
 		{
@@ -193,8 +202,10 @@ void Game::loadBoard()
 	}
 }
 
+//this thing sucks
 void Game::placePeice(Peice peice, sf::Vector2i location)
 {
+	m_resources.addSpr(*getPath(peice));
 	m_boardState[location.x][location.y] = peice;
 }
 
