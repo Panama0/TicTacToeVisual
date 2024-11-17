@@ -13,12 +13,12 @@ public:
 
 	void makeMove();		// make a move based on the current difficulty level
 	void randomMove();
-	bool immidiateWin(Game::Peice player);
+	bool immidiateWin(Peice::Peices player);
 
 private:
 
 	int m_skill{0};		// holds the difficulty level (0-5)
 	//we will see if this works
 	Game::Board* const m_aiBoardState;
-	Game::Peice m_peice{ Game::Peice::O };
+	Peice::Peices m_aiPeice{ Peice::Peices::O };
 };

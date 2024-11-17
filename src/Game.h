@@ -1,6 +1,7 @@
 #pragma once
 #include "SFML/Graphics.hpp"
-#include "ResourceManager.h"
+#include "TileResources.h"
+#include "Peice.h"
 #include <array>
 #include <optional>
 
@@ -17,14 +18,6 @@ namespace GridDim
 class Game
 {
 public:
-	enum Peice
-	{
-		empty,
-		X,
-		O,
-		tile,
-	};
-
 	using Board = std::array<std::array<Peice, 3>, 3>;
 	using BoardPos = std::array<std::array<sf::Vector2f, 3>, 3>;
 
@@ -37,16 +30,16 @@ public:
 	void drawBoard();
 	void drawPeices();
 	void loadBoard();
-	void placePeice(Peice peice, sf::Vector2i location);
+	void placePeice(Peice::Peices peice, sf::Vector2i location);
 
-	std::optional<const char*> Game::getPath(Game::Peice asset);
+	std::optional<const char*> Game::getPath(Peice::Peices asset);
 
 private:
 	sf::RenderWindow m_window{};
-	Board m_boardState{};
-	Peice m_turn{ Peice::X };		// default is for X to start
+	Board m_board{};		// holds the state of the board and the peices
+	Peice::Peices m_turn{ Peice::Peices::X };		// default is for X to start
 	BoardPos m_boardGrid{};
 	sf::Clock m_deltaClock{};
 
-	ResMan m_resources;
+	tileResources m_resources;
 };

@@ -32,9 +32,10 @@
     </ClCompile>
     <ClCompile Include="lib\imgui\imgui_demo.cpp" />
     <ClCompile Include="src\Game.cpp" />
-    <ClCompile Include="src\ResourceManager.cpp" />
+    <ClCompile Include="src\TileResources.cpp" />
     <ClCompile Include="src\GameObject.cpp" />
     <ClCompile Include="src\AiPlayer.cpp" />
+    <ClCompile Include="src\Peice.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib\imgui\imconfig.h" />
@@ -47,9 +48,10 @@
     <ClInclude Include="lib\imgui\imstb_textedit.h" />
     <ClInclude Include="lib\imgui\imstb_truetype.h" />
     <ClInclude Include="src\Game.h" />
-    <ClInclude Include="src\ResourceManager.h" />
+    <ClInclude Include="src\TileResources.h" />
     <ClInclude Include="src\GameObject.h" />
     <ClInclude Include="src\Utils.h" />
     <ClInclude Include="src\AiPlayer.h" />
+    <ClInclude Include="src\Peice.h" />
   </ItemGroup>
 </Project>

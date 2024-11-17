@@ -24,28 +24,28 @@ void Game::run()
 {
 	while (m_window.isOpen())
 	{
-#define debug
+#define debug0
 #ifdef debug1
-		Board debugBoard = { {{{ Peice::O,		Peice::O,		Peice::empty }},
-							  {{ Peice::X,		Peice::X,		Peice::empty }},
-							  {{ Peice::empty,	Peice::empty,	Peice::empty }}}};;
+		Board debugBoard = { {{{ Peices::O,		Peices::O,		Peices::empty }},
+							  {{ Peices::X,		Peices::X,		Peices::empty }},
+							  {{ Peices::empty,	Peices::empty,	Peices::empty }}}};;
 		AiPlayer ai(&debugBoard);
 		ai.makeMove();
 #endif // debug1
 
 		//temp?
-		AiPlayer ai(&m_boardState);
+		AiPlayer ai(&m_board);
 
 		//process input
 		handleInput();
 		//update stuff
 
 		//TODO: move the below
-		if (m_turn == Game::Peice::O)
+		if (m_turn == Peice::Peices::O)
 		{
 			ai.makeMove();
-			m_resources.addSpr(*getPath(Peice::O));
-			m_turn = Game::Peice::X;
+			//m_resources.addSpr(*getPath(Peice::Peices::O));
+			m_turn = Peice::Peices::X;
 		}
 		//draw stuff
 		draw();
@@ -70,10 +70,11 @@ void Game::handleInput()
 				if (CurrentTileBounds.contains(mousePos))
 				{
 					clickCoords = remap1Dto2D(i);
-					if (m_turn == Peice::X && m_boardState[clickCoords.x][clickCoords.y] == Peice::empty)
+					if (m_turn == Peice::Peices::X && m_board[clickCoords.x][clickCoords.y].corePeice == Peice::Peices::empty)
 					{
-						placePeice(Peice::X, clickCoords);
-						m_turn = Peice::O;
+						placePeice(Peice::Peices::X, clickCoords);
+						//the below line creates undefined behavoiur and i am not sure why
+						//m_turn = Peice::Peices::O;
 					}
 				}
 			}
@@ -154,25 +155,17 @@ void Game::drawBoard()
 
 void Game::drawPeices()
 {
-	int counter{};
-	for (int i{}; i < GridDim::gridSquares; i++)
+	//loop through the board and draw the peices found.
+	for (int x{}; x < 3; x++)
 	{
-		sf::Vector2i remapI{ remap1Dto2D(i) };
-
-		switch (m_boardState[remapI.x][remapI.y])
+		for (int y{}; y < 3; y++)
 		{
-		case Peice::X:
-			m_resources.PeicesX[counter].sprite.setPosition(m_boardGrid[remapI.x][remapI.y]);
-			m_window.draw(m_resources.PeicesX[counter].sprite);
-			counter++;
-			break;
-		case Peice::O:
-			m_resources.PeicesO[counter].sprite.setPosition(m_boardGrid[remapI.x][remapI.y]);
-			m_window.draw(m_resources.PeicesO[counter].sprite);
-			counter++;
-			break;
-		default:
-			break;
+			//dont draw empty tiles
+			if (m_board[x][y].corePeice != Peice::Peices::empty)
+			{
+				m_board[x][y].getSpr().setPosition(m_boardGrid[x][y]);
+				m_window.draw(m_board[x][y].getSpr());
+			}
 		}
 	}
 }
@@ -186,13 +179,13 @@ void Game::loadBoard()
 	{
 		for (int j{}; j < 3; j++)
 		{
-			m_boardGrid[j][i] = { offset.x + i * (GridDim::spriteSize - GridDim::colWidth), offset.y + j * (GridDim::spriteSize - GridDim::colWidth) };
+			m_boardGrid[i][j] = { offset.x + i * (GridDim::spriteSize - GridDim::colWidth), offset.y + j * (GridDim::spriteSize - GridDim::colWidth) };
 		}
 	}
 
-	//TODO:move to resman
+	//TODO:move to tileresources
 	std::optional<std::string> path;
-	if (path = getPath(Peice::tile))
+	if (path = getPath(Peice::Peices::tile))
 	{
 		m_resources.loadTiles(9, *path);
 	}
@@ -203,23 +196,26 @@ void Game::loadBoard()
 }
 
 //this thing sucks
-void Game::placePeice(Peice peice, sf::Vector2i location)
+void Game::placePeice(Peice::Peices peice, sf::Vector2i location)
 {
-	m_resources.addSpr(*getPath(peice));
-	m_boardState[location.x][location.y] = peice;
+	//TODO: not actually using the optional here lul
+	//m_resources.addSpr(*getPath(peice));
+	m_board[location.x][location.y].corePeice = peice;
+
+	m_board[location.x][location.y].load(*getPath(peice));
 }
 
-std::optional<const char*> Game::getPath(Game::Peice asset)
+std::optional<const char*> Game::getPath(Peice::Peices asset)
 {
 	switch (asset)
 	{
-	case Game::X:
+	case Peice::Peices::X:
 		return "./res/x.png";
 		break;
-	case Game::O:
+	case Peice::Peices::O:
 		return "./res/o.png";
 		break;
-	case Game::tile:
+	case Peice::Peices::tile:
 		return "./res/sq.png";
 		break;
 	default:
