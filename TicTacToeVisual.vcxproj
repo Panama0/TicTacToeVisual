@@ -100,7 +100,7 @@
     <ClCompile Include="lib\imgui\imgui_draw.cpp" />
     <ClCompile Include="lib\imgui\imgui_tables.cpp" />
     <ClCompile Include="lib\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="src\Peice.cpp" />
+    <ClCompile Include="src\BoardSquare.cpp" />
     <ClCompile Include="src\AiPlayer.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\GameObject.cpp" />
@@ -117,10 +117,12 @@
     <ClInclude Include="lib\imgui\imstb_rectpack.h" />
     <ClInclude Include="lib\imgui\imstb_textedit.h" />
     <ClInclude Include="lib\imgui\imstb_truetype.h" />
-    <ClInclude Include="src\Peice.h" />
+    <ClInclude Include="src\BoardSquare.h" />
     <ClInclude Include="src\AiPlayer.h" />
+    <ClInclude Include="src\BoardState.h" />
     <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\GameObject.h" />
+    <ClInclude Include="src\GridDim.h" />
     <ClInclude Include="src\TileResources.h" />
     <ClInclude Include="src\Utils.h" />
   </ItemGroup>

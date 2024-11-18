@@ -2,7 +2,7 @@
 #include "GameObject.h"
 #include "SFML/Graphics.hpp"
 
-class Peice
+class BoardSquare
 {
 public:
 	enum class Peices
@@ -13,7 +13,8 @@ public:
 		tile,
 	};
 
-	Peices corePeice{ Peices::empty };
+	Peices squareState{ Peices::empty };
+	sf::Vector2f position{};		//in world space of the square
 	
 	void load(const char* path);
 

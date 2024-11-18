@@ -1,24 +1,27 @@
 #pragma once
-#include "Game.h"
 #include "Utils.h"
+#include "BoardSquare.h"
+#include "BoardState.h"
 #include "SFML/Graphics.hpp"
-#include <random>
+#include <optional>
+
 
 //idea is to be able to have 2 of these for ai vs ai matches.
 class AiPlayer
 {
 public:
 	AiPlayer() = delete;
-	AiPlayer(Game::Board* const boardState);
+	AiPlayer(BoardState* const boardState);
 
-	void makeMove();		// make a move based on the current difficulty level
-	void randomMove();
-	bool immidiateWin(Peice::Peices player);
+	BoardSquare::Peices aiPeice{ BoardSquare::Peices::O };
+
+	sf::Vector2i getMove();		// make a move based on the current difficulty level
+	sf::Vector2i randomMove();
+	std::optional<sf::Vector2i> immidiateWin(BoardSquare::Peices player);
 
 private:
 
 	int m_skill{0};		// holds the difficulty level (0-5)
 	//we will see if this works
-	Game::Board* const m_aiBoardState;
-	Peice::Peices m_aiPeice{ Peice::Peices::O };
+	BoardState* const m_aiBoardState;
 };

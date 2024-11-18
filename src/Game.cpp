@@ -1,7 +1,10 @@
 #include "Game.h"
 #include "imgui.h"
 #include "Utils.h"
+#include "BoardSquare.h"
+#include "BoardState.h"
 #include "AiPlayer.h"
+#include "GridDim.h"
 #include "SFML/Graphics.hpp"
 #include <iostream>
 #include <optional>
@@ -10,6 +13,7 @@
 
 
 Game::Game()
+	:m_AiPlayer{&m_board}
 {
 	sf::ContextSettings settings;
 	settings.antialiasingLevel = 8;
@@ -30,22 +34,20 @@ void Game::run()
 							  {{ Peices::X,		Peices::X,		Peices::empty }},
 							  {{ Peices::empty,	Peices::empty,	Peices::empty }}}};;
 		AiPlayer ai(&debugBoard);
-		ai.makeMove();
+		ai.getMove();
 #endif // debug1
 
-		//temp?
-		AiPlayer ai(&m_board);
+		
 
 		//process input
 		handleInput();
 		//update stuff
 
 		//TODO: move the below
-		if (m_turn == Peice::Peices::O)
+		if (m_turn == BoardSquare::Peices::O)
 		{
-			ai.makeMove();
-			//m_resources.addSpr(*getPath(Peice::Peices::O));
-			m_turn = Peice::Peices::X;
+			makeAiMove();
+			m_turn = BoardSquare::Peices::X;
 		}
 		//draw stuff
 		draw();
@@ -70,11 +72,15 @@ void Game::handleInput()
 				if (CurrentTileBounds.contains(mousePos))
 				{
 					clickCoords = remap1Dto2D(i);
-					if (m_turn == Peice::Peices::X && m_board[clickCoords.x][clickCoords.y].corePeice == Peice::Peices::empty)
+					if (m_turn == BoardSquare::Peices::X && m_board.board[clickCoords.x][clickCoords.y].squareState == BoardSquare::Peices::empty)
 					{
-						placePeice(Peice::Peices::X, clickCoords);
-						//the below line creates undefined behavoiur and i am not sure why
-						//m_turn = Peice::Peices::O;
+						placePeice(BoardSquare::Peices::X, clickCoords);
+						m_turn = BoardSquare::Peices::O;
+						break;
+					}
+					else
+					{
+						break;
 					}
 				}
 			}
@@ -145,7 +151,7 @@ void Game::drawBoard()
 			for (int j{}; j < 3; j++)
 			{
 				//TODO: move the set pos to some kind of update
-				m_resources.tiles[k].sprite.setPosition(m_boardGrid[i][j]);
+				m_resources.tiles[k].sprite.setPosition(m_board.board[i][j].position);
 				m_window.draw(m_resources.tiles[k].sprite);
 				k++;
 			}
@@ -161,10 +167,10 @@ void Game::drawPeices()
 		for (int y{}; y < 3; y++)
 		{
 			//dont draw empty tiles
-			if (m_board[x][y].corePeice != Peice::Peices::empty)
+			if (m_board.board[x][y].squareState != BoardSquare::Peices::empty)
 			{
-				m_board[x][y].getSpr().setPosition(m_boardGrid[x][y]);
-				m_window.draw(m_board[x][y].getSpr());
+				m_board.board[x][y].getSpr().setPosition(m_board.board[x][y].position);
+				m_window.draw(m_board.board[x][y].getSpr());
 			}
 		}
 	}
@@ -179,13 +185,14 @@ void Game::loadBoard()
 	{
 		for (int j{}; j < 3; j++)
 		{
-			m_boardGrid[i][j] = { offset.x + i * (GridDim::spriteSize - GridDim::colWidth), offset.y + j * (GridDim::spriteSize - GridDim::colWidth) };
+			m_board.board[i][j].position = { offset.x + i * (GridDim::spriteSize - GridDim::colWidth), 
+									   offset.y + j * (GridDim::spriteSize - GridDim::colWidth) };
 		}
 	}
 
 	//TODO:move to tileresources
 	std::optional<std::string> path;
-	if (path = getPath(Peice::Peices::tile))
+	if (path = getPath(BoardSquare::Peices::tile))
 	{
 		m_resources.loadTiles(9, *path);
 	}
@@ -196,26 +203,31 @@ void Game::loadBoard()
 }
 
 //this thing sucks
-void Game::placePeice(Peice::Peices peice, sf::Vector2i location)
+void Game::placePeice(BoardSquare::Peices peice, sf::Vector2i location)
 {
 	//TODO: not actually using the optional here lul
 	//m_resources.addSpr(*getPath(peice));
-	m_board[location.x][location.y].corePeice = peice;
+	m_board.board[location.x][location.y].squareState = peice;
 
-	m_board[location.x][location.y].load(*getPath(peice));
+	m_board.board[location.x][location.y].load(*getPath(peice));
 }
 
-std::optional<const char*> Game::getPath(Peice::Peices asset)
+void Game::makeAiMove()
+{
+	placePeice(m_AiPlayer.aiPeice, m_AiPlayer.getMove());
+}
+
+std::optional<const char*> Game::getPath(BoardSquare::Peices asset)
 {
 	switch (asset)
 	{
-	case Peice::Peices::X:
+	case BoardSquare::Peices::X:
 		return "./res/x.png";
 		break;
-	case Peice::Peices::O:
+	case BoardSquare::Peices::O:
 		return "./res/o.png";
 		break;
-	case Peice::Peices::tile:
+	case BoardSquare::Peices::tile:
 		return "./res/sq.png";
 		break;
 	default:

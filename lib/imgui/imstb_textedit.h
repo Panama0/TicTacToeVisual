@@ -774,7 +774,7 @@ retry:
          int c = STB_TEXTEDIT_KEYTOTEXT(key);
          if (c > 0) {
             IMSTB_TEXTEDIT_CHARTYPE ch = (IMSTB_TEXTEDIT_CHARTYPE)c;
-            stb_textedit_text(str, state, &ch, 1);
+            stb_textedit_text(str, squareState, &ch, 1);
          }
 #endif
          break;
@@ -782,7 +782,7 @@ retry:
 
 #ifdef STB_TEXTEDIT_K_INSERT
       case STB_TEXTEDIT_K_INSERT:
-         state->insert_mode = !state->insert_mode;
+         squareState->insert_mode = !squareState->insert_mode;
          break;
 #endif
 

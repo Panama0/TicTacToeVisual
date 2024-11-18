@@ -5354,7 +5354,7 @@ void ImGui::DebugNodeInputTextState(ImGuiInputTextState* state)
     }
     EndChild();
 #else
-    IM_UNUSED(state);
+    IM_UNUSED(squareState);
 #endif
 }
 
