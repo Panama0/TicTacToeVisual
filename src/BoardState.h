@@ -5,7 +5,7 @@
 struct BoardState
 {
 public:
-	using Board = std::array<std::array<BoardSquare, 3>, 3>;
+    using Board = std::array<std::array<BoardSquare, 3>, 3>;
 
-	Board board;
+    Board board;
 };

@@ -7,10 +7,10 @@
 class tileResources
 {
 public:
-	GameObj tiles[9];
-	sf::RectangleShape highlight;
+    GameObj tiles[9];
+    sf::RectangleShape highlight;
 
-	void loadTiles(const int num, std::string_view path);
+    void loadTiles(const int num, std::string_view path);
 private:
 
 };

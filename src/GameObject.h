@@ -5,11 +5,11 @@
 class GameObj
 {
 public:
-	sf::Sprite sprite;
+    sf::Sprite sprite;
 
-	void loadTexture(std::string_view path);
+    void loadTexture(std::string_view path);
 
-	sf::Rect<float>& getClickbox();
+    sf::Rect<float>& getClickbox();
 private:
-	sf::Texture m_texture;
+    sf::Texture m_texture;
 };
