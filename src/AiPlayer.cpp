@@ -21,7 +21,6 @@ sf::Vector2i AiPlayer::getMove()
 {
     const BoardSquare::Peices opponentPeice{ aiPeice == BoardSquare::Peices::X ? BoardSquare::Peices::O : BoardSquare::Peices::X };
 
-    //temp
     std::optional<sf::Vector2i> move;
 
     //TODO: make the below more scalable, endless ifs cant be the best way to go

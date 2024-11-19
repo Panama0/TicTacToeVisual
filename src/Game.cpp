@@ -8,6 +8,7 @@
 #include "SFML/Graphics.hpp"
 #include <iostream>
 #include <optional>
+#include <chrono>
 
 
 
@@ -26,6 +27,11 @@ Game::Game()
 
 void Game::run()
 {
+    std::chrono::steady_clock::time_point start;
+    std::chrono::milliseconds waitTime{ 500 };
+
+    bool waitFlag{ true };
+
     while (m_window.isOpen())
     {
 #define debug0
@@ -46,8 +52,18 @@ void Game::run()
         //TODO: move the below
         if (m_turn == BoardSquare::Peices::O)
         {
-            makeAiMove();
-            m_turn = BoardSquare::Peices::X;
+            if (waitFlag)
+            {
+                start = std::chrono::steady_clock::now();
+                waitFlag = false;
+            }
+            auto now{ std::chrono::steady_clock::now() };
+            if ((now - start) > waitTime)
+            {
+                makeAiMove();
+                m_turn = BoardSquare::Peices::X;
+                waitFlag = true;
+            }
         }
         //draw stuff
         draw();
