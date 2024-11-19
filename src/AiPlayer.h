@@ -15,6 +15,8 @@ public:
 
 	BoardSquare::Peices aiPeice{ BoardSquare::Peices::O };
 
+	void setState(BoardState* const boardState);
+
 	sf::Vector2i getMove();		// make a move based on the current difficulty level
 	sf::Vector2i randomMove();
 	std::optional<sf::Vector2i> immidiateWin(BoardSquare::Peices player);
@@ -23,5 +25,5 @@ private:
 
 	int m_skill{0};		// holds the difficulty level (0-5)
 	//we will see if this works
-	BoardState* const m_aiBoardState;
+	BoardState* m_aiBoardState;
 };

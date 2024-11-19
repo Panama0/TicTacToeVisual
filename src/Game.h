@@ -8,10 +8,6 @@
 #include <array>
 #include <optional>
 
-
-
-
-//stores state only
 class Game
 {
 public:
@@ -26,6 +22,8 @@ public:
 	void loadBoard();
 	void placePeice(BoardSquare::Peices peice, sf::Vector2i location);
 	void makeAiMove();
+
+	void reset();
 
 	std::optional<const char*> Game::getPath(BoardSquare::Peices asset);
 private:

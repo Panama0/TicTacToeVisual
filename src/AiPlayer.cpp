@@ -12,6 +12,11 @@ AiPlayer::AiPlayer(BoardState* const boardState)
 {
 }
 
+void AiPlayer::setState(BoardState* const boardState)
+{
+	m_aiBoardState = boardState;
+}
+
 sf::Vector2i AiPlayer::getMove()
 {
 	const BoardSquare::Peices opponentPeice{ aiPeice == BoardSquare::Peices::X ? BoardSquare::Peices::O : BoardSquare::Peices::X };
@@ -43,9 +48,15 @@ sf::Vector2i AiPlayer::randomMove()
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<> randMove(0, GridDim::gridSquares - 1);
 
-	int move{ randMove(gen) };
+	sf::Vector2i move2d{};
 
-	return remap1Dto2D(move);
+	do
+	{
+		move2d = remap1Dto2D(randMove(gen));
+	} while ((*m_aiBoardState).board[move2d.x][move2d.y].squareState != BoardSquare::Peices::empty);
+	
+
+	return move2d;
 }
 
 //search for 2 in a row and then return the move if it can be made

@@ -133,8 +133,14 @@ void Game::drawUI()
 	{
 		if (ImGui::BeginMenu("Options"))
 		{
-			if (ImGui::MenuItem("New Game")) {}
-			if (ImGui::MenuItem("Exit")) {}
+			if (ImGui::MenuItem("New Game"))
+			{
+				reset();
+			}
+			if (ImGui::MenuItem("Exit"))
+			{
+				m_window.close();
+			}
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();
@@ -215,6 +221,18 @@ void Game::placePeice(BoardSquare::Peices peice, sf::Vector2i location)
 void Game::makeAiMove()
 {
 	placePeice(m_AiPlayer.aiPeice, m_AiPlayer.getMove());
+}
+
+void Game::reset()
+{
+	//reset board
+	this->m_board = {};
+	m_turn = BoardSquare::Peices::X;
+
+	//reset ai
+	m_AiPlayer.setState(&m_board);
+
+	loadBoard();
 }
 
 std::optional<const char*> Game::getPath(BoardSquare::Peices asset)
