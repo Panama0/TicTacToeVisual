@@ -14,6 +14,10 @@ public:
     Game();
 
     void run();
+    void reset();
+
+    std::optional<const char*> Game::getPath(BoardSquare::Peices asset);
+private:
     void handleInput();
     void draw();
     void drawUI();
@@ -22,14 +26,12 @@ public:
     void loadBoard();
     void placePeice(BoardSquare::Peices peice, sf::Vector2i location);
     void makeAiMove();
+    std::optional<BoardSquare::Peices> checkVictory();
 
-    void reset();
-
-    std::optional<const char*> Game::getPath(BoardSquare::Peices asset);
-private:
     sf::RenderWindow m_window{};
     BoardState m_board{};        // holds the state of the board and the peices
     BoardSquare::Peices m_turn{ BoardSquare::Peices::X };        // default is for X to start
+    BoardSquare::Peices m_playerPeice{ BoardSquare::Peices::X };
     sf::Clock m_deltaClock{};
 
     AiPlayer m_AiPlayer;

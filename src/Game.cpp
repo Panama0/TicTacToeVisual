@@ -27,6 +27,7 @@ Game::Game()
 
 void Game::run()
 {
+    //we must move this
     std::chrono::steady_clock::time_point start;
     std::chrono::milliseconds waitTime{ 500 };
 
@@ -34,21 +35,10 @@ void Game::run()
 
     while (m_window.isOpen())
     {
-#define debug0
-#ifdef debug1
-        Board debugBoard = { {{{ Peices::O,        Peices::O,        Peices::empty }},
-                              {{ Peices::X,        Peices::X,        Peices::empty }},
-                              {{ Peices::empty,    Peices::empty,    Peices::empty }}}};;
-        AiPlayer ai(&debugBoard);
-        ai.getMove();
-#endif // debug1
-
-        
-
         //process input
         handleInput();
         //update stuff
-
+        checkVictory();
         //TODO: move the below
         if (m_turn == BoardSquare::Peices::O)
         {
@@ -63,6 +53,8 @@ void Game::run()
                 makeAiMove();
                 m_turn = BoardSquare::Peices::X;
                 waitFlag = true;
+                //random duration each time for better feel
+                waitTime = std::chrono::milliseconds(Utils::getRandomNumber(100, 750));
             }
         }
         //draw stuff
@@ -87,7 +79,7 @@ void Game::handleInput()
                 CurrentTileBounds = m_resources.tiles[i].getClickbox();
                 if (CurrentTileBounds.contains(mousePos))
                 {
-                    clickCoords = remap1Dto2D(i);
+                    clickCoords = Utils::remap1Dto2D(i);
                     if (m_turn == BoardSquare::Peices::X && m_board.board[clickCoords.x][clickCoords.y].squareState == BoardSquare::Peices::empty)
                     {
                         placePeice(BoardSquare::Peices::X, clickCoords);
@@ -237,6 +229,28 @@ void Game::placePeice(BoardSquare::Peices peice, sf::Vector2i location)
 void Game::makeAiMove()
 {
     placePeice(m_AiPlayer.aiPeice, m_AiPlayer.getMove());
+}
+
+std::optional<BoardSquare::Peices> Game::checkVictory()        // returns nullopt if no victor, returns true if player won, false if lost
+{
+    //vertical
+    for (int x{}; x < 3; x++)
+    {
+        int sum{};
+        for (int y{}; y < 3; y++)
+        {
+            if (m_board.board[x][y].squareState == m_playerPeice)
+            {
+                sum++;
+            }
+        }
+        if (sum == 3)
+        {
+            return m_playerPeice;
+        }
+    }
+
+    return std::nullopt;
 }
 
 void Game::reset()

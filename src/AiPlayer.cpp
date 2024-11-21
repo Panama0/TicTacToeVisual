@@ -2,6 +2,7 @@
 #include "BoardState.h"
 #include "BoardSquare.h"
 #include "GridDim.h"
+#include "Utils.h"
 #include "SFML/Graphics.hpp"
 #include <random>
 #include <optional>
@@ -43,19 +44,15 @@ sf::Vector2i AiPlayer::getMove()
 
 sf::Vector2i AiPlayer::randomMove()
 {
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> randMove(0, GridDim::gridSquares - 1);
-
-    sf::Vector2i move2d{};
+    sf::Vector2i move{};
 
     do
     {
-        move2d = remap1Dto2D(randMove(gen));
-    } while ((*m_aiBoardState).board[move2d.x][move2d.y].squareState != BoardSquare::Peices::empty);
+        move = Utils::remap1Dto2D(Utils::getRandomNumber(0, GridDim::gridSquares - 1));
+    } while ((*m_aiBoardState).board[move.x][move.y].squareState != BoardSquare::Peices::empty);
     
 
-    return move2d;
+    return move;
 }
 
 //search for 2 in a row and then return the move if it can be made
@@ -66,7 +63,7 @@ std::optional<sf::Vector2i>  AiPlayer::immidiateWin(BoardSquare::Peices playerPe
 
     const BoardSquare::Peices opponentPeice{ playerPeice == BoardSquare::Peices::X ? BoardSquare::Peices::O : BoardSquare::Peices::X };
 
-    sf::Vector2i move;
+    std::optional<sf::Vector2i> move{std::nullopt};
 
     //vertical
     for (int y{}; y < 3; y++)
@@ -153,7 +150,8 @@ std::optional<sf::Vector2i>  AiPlayer::immidiateWin(BoardSquare::Peices playerPe
         else if ((*m_aiBoardState).board[x][y].squareState == opponentPeice) {
             opponentCount++;
         }
-        else {
+        else if ((*m_aiBoardState).board[x][y].squareState == BoardSquare::Peices::empty)
+        {
             move = { x , y };
         }
     }
