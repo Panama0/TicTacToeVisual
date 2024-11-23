@@ -1,5 +1,5 @@
 #include "AiPlayer.h"
-#include "BoardState.h"
+#include "Board.h"
 #include "BoardSquare.h"
 #include "GridDim.h"
 #include "Utils.h"
@@ -8,12 +8,12 @@
 #include <optional>
 
 
-AiPlayer::AiPlayer(BoardState* const boardState)
+AiPlayer::AiPlayer(Board& boardState)
     :m_aiBoardState{ boardState }
 {
 }
 
-void AiPlayer::setState(BoardState* const boardState)
+void AiPlayer::setState(Board& boardState)
 {
     m_aiBoardState = boardState;
 }
@@ -49,7 +49,7 @@ sf::Vector2i AiPlayer::randomMove()
     do
     {
         move = Utils::remap1Dto2D(Utils::getRandomNumber(0, GridDim::gridSquares - 1));
-    } while ((*m_aiBoardState).board[move.x][move.y].squareState != BoardSquare::Peices::empty);
+    } while (m_aiBoardState.getState(move) != BoardSquare::Peices::empty);
     
 
     return move;
@@ -58,37 +58,37 @@ sf::Vector2i AiPlayer::randomMove()
 //search for 2 in a row and then return the move if it can be made
 std::optional<sf::Vector2i>  AiPlayer::immidiateWin(BoardSquare::Peices playerPeice)
 {
-    int aiCount{};
+    int playerCount{};
     int opponentCount{};
 
     const BoardSquare::Peices opponentPeice{ playerPeice == BoardSquare::Peices::X ? BoardSquare::Peices::O : BoardSquare::Peices::X };
 
-    std::optional<sf::Vector2i> move{std::nullopt};
+    std::optional<sf::Vector2i> move{ {0,0} };
 
     //vertical
     for (int y{}; y < 3; y++)
     {
         for (int x{}; x < 3; x++)
         {
-            if ((*m_aiBoardState).board[x][y].squareState == playerPeice)
+            if (m_aiBoardState.getState({x,y}) == playerPeice)
             {
-                aiCount++;
+                playerCount++;
             }
-            else if ((*m_aiBoardState).board[x][y].squareState == opponentPeice)
+            else if (m_aiBoardState.getState({x,y}) == opponentPeice)
             {
                 opponentCount++;
             }
-            else if ((*m_aiBoardState).board[x][y].squareState == BoardSquare::Peices::empty)
+            else if (m_aiBoardState.getState({x,y}) == BoardSquare::Peices::empty)
             {
                 //save the blank spot
                 move = { x , y };
             }
         }
-        if (aiCount > 1 && opponentCount < 1)
+        if (playerCount > 1 && opponentCount < 1)
         {        // if theres 2 O and no X present
             return move;
         }
-        aiCount = 0;
+        playerCount = 0;
         opponentCount = 0;
     }
 
@@ -97,65 +97,65 @@ std::optional<sf::Vector2i>  AiPlayer::immidiateWin(BoardSquare::Peices playerPe
     {
         for (int y{}; y < 3; y++)
         {
-            if ((*m_aiBoardState).board[x][y].squareState == playerPeice)
+            if (m_aiBoardState.getState({x,y}) == playerPeice)
             {
-                aiCount++;
+                playerCount++;
             }
-            else if ((*m_aiBoardState).board[x][y].squareState == opponentPeice)
+            else if (m_aiBoardState.getState({x,y}) == opponentPeice)
             {
                 opponentCount++;
             }
-            else if ((*m_aiBoardState).board[x][y].squareState == BoardSquare::Peices::empty)
+            else if (m_aiBoardState.getState({x,y}) == BoardSquare::Peices::empty)
             {
                 //save the blank spot
                 move = { x , y };
             }
         }
-        if (aiCount > 1 && opponentCount < 1)
+        if (playerCount > 1 && opponentCount < 1)
         {    // if theres 2 O and no X present
             return move;
         }
-        aiCount = 0;
+        playerCount = 0;
         opponentCount = 0;
     }
 
     //diag right
     for (int i{}; i < 3; i++)
     {
-        if ((*m_aiBoardState).board[i][i].squareState == playerPeice)
+        if (m_aiBoardState.getState({i,i}) == playerPeice)
         {
-            aiCount++;
+            playerCount++;
         } 
-        else if ((*m_aiBoardState).board[i][i].squareState == opponentPeice)
+        else if (m_aiBoardState.getState({i,i}) == opponentPeice)
         {
             opponentCount++;
         }
-        else if ((*m_aiBoardState).board[i][i].squareState == BoardSquare::Peices::empty)
+        else if (m_aiBoardState.getState({i,i}) == BoardSquare::Peices::empty)
         {
             move = { i, i };
         }
     }
-    if (aiCount > 1 && opponentCount < 1)    // if theres 2 O and no X present
+    if (playerCount > 1 && opponentCount < 1)    // if theres 2 O and no X present
     {
         return move;
     }
-    aiCount = 0;
+    playerCount = 0;
     opponentCount = 0;
 
     //diag left
     for (int x{}, y{ 2 }; x < 3; x++, y--) {
-        if ((*m_aiBoardState).board[x][y].squareState == playerPeice) {
-            aiCount++;
+        if (m_aiBoardState.getState({x,y}) == playerPeice) {
+            playerCount++;
         }
-        else if ((*m_aiBoardState).board[x][y].squareState == opponentPeice) {
+        else if (m_aiBoardState.getState({x,y}) == opponentPeice) {
             opponentCount++;
         }
-        else if ((*m_aiBoardState).board[x][y].squareState == BoardSquare::Peices::empty)
+        else if (m_aiBoardState.getState({x,y}) == BoardSquare::Peices::empty)
         {
             move = { x , y };
         }
     }
-    if (aiCount > 1 && opponentCount < 1) {        // if theres 2 O and no X present
+    if (playerCount > 1 && opponentCount < 1) {        // if theres 2 O and no X present
         return move;
     }
 

@@ -21,6 +21,15 @@ namespace Utils
         }
     }
 
+    static int remap2Dto1D(const sf::Vector2i index)
+    {
+        const int remap[3][3]{{{0}, {1}, {2}}
+                             ,{{3}, {4}, {5}}
+                             ,{{6}, {7}, {8}}};
+
+        return remap[index.y][index.x];
+    }
+
     static int getRandomNumber(const int min, const int max)
     {
         std::random_device rd;

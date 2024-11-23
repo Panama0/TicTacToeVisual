@@ -2,7 +2,7 @@
 #include "imgui.h"
 #include "Utils.h"
 #include "BoardSquare.h"
-#include "BoardState.h"
+#include "Board.h"
 #include "AiPlayer.h"
 #include "GridDim.h"
 #include "SFML/Graphics.hpp"
@@ -14,7 +14,7 @@
 
 
 Game::Game()
-    :m_AiPlayer{&m_board}
+    :m_AiPlayer{m_board}
 {
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
@@ -38,7 +38,7 @@ void Game::run()
         //process input
         handleInput();
         //update stuff
-        checkVictory();
+        
         //TODO: move the below
         if (m_turn == BoardSquare::Peices::O)
         {
@@ -80,7 +80,7 @@ void Game::handleInput()
                 if (CurrentTileBounds.contains(mousePos))
                 {
                     clickCoords = Utils::remap1Dto2D(i);
-                    if (m_turn == BoardSquare::Peices::X && m_board.board[clickCoords.x][clickCoords.y].squareState == BoardSquare::Peices::empty)
+                    if (m_turn == BoardSquare::Peices::X && m_board.getState(clickCoords) == BoardSquare::Peices::empty)
                     {
                         placePeice(BoardSquare::Peices::X, clickCoords);
                         m_turn = BoardSquare::Peices::O;
@@ -160,12 +160,12 @@ void Game::drawBoard()
 {
     {
         int k{};
-        for (int i{}; i < 3; i++)
+        for (int x{}; x < 3; x++)
         {
-            for (int j{}; j < 3; j++)
+            for (int y{}; y < 3; y++)
             {
                 //TODO: move the set pos to some kind of update
-                m_resources.tiles[k].sprite.setPosition(m_board.board[i][j].position);
+                m_resources.tiles[k].sprite.setPosition(m_board.getPosition({x,y}));
                 m_window.draw(m_resources.tiles[k].sprite);
                 k++;
             }
@@ -175,16 +175,14 @@ void Game::drawBoard()
 
 void Game::drawPeices()
 {
-    //loop through the board and draw the peices found.
     for (int x{}; x < 3; x++)
     {
         for (int y{}; y < 3; y++)
         {
             //dont draw empty tiles
-            if (m_board.board[x][y].squareState != BoardSquare::Peices::empty)
+            if (m_board.getState({x,y}) != BoardSquare::Peices::empty)
             {
-                m_board.board[x][y].getSpr().setPosition(m_board.board[x][y].position);
-                m_window.draw(m_board.board[x][y].getSpr());
+                m_window.draw(m_board.getSpr({x,y}));
             }
         }
     }
@@ -195,12 +193,12 @@ void Game::loadBoard()
     const sf::Vector2f offset{ static_cast<float>(GridDim::colWidth + m_window.getSize().x/2 - (GridDim::gridSize * GridDim::spriteSize)/2),
                                static_cast<float>(GridDim::colWidth + m_window.getSize().y/2 - (GridDim::gridSize * GridDim::spriteSize)/2)};
 
-    for (int i{}; i < 3; i++)
+    for (int x{}; x < 3; x++)
     {
-        for (int j{}; j < 3; j++)
+        for (int y{}; y < 3; y++)
         {
-            m_board.board[i][j].position = { offset.x + i * (GridDim::spriteSize - GridDim::colWidth), 
-                                       offset.y + j * (GridDim::spriteSize - GridDim::colWidth) };
+            m_board.setPosition({ x,y }, { offset.x + y * (GridDim::spriteSize - GridDim::colWidth),
+                                           offset.y + x * (GridDim::spriteSize - GridDim::colWidth) });
         }
     }
 
@@ -220,10 +218,9 @@ void Game::loadBoard()
 void Game::placePeice(BoardSquare::Peices peice, sf::Vector2i location)
 {
     //TODO: not actually using the optional here lul
-    //m_resources.addSpr(*getPath(peice));
-    m_board.board[location.x][location.y].squareState = peice;
+    m_board.setState(location, peice);
 
-    m_board.board[location.x][location.y].load(*getPath(peice));
+    m_board.load(location, *getPath(peice));
 }
 
 void Game::makeAiMove()
@@ -239,7 +236,7 @@ std::optional<BoardSquare::Peices> Game::checkVictory()        // returns nullop
         int sum{};
         for (int y{}; y < 3; y++)
         {
-            if (m_board.board[x][y].squareState == m_playerPeice)
+            if (m_board.getState({x,y}) == m_playerPeice)
             {
                 sum++;
             }
@@ -260,7 +257,7 @@ void Game::reset()
     m_turn = BoardSquare::Peices::X;
 
     //reset ai
-    m_AiPlayer.setState(&m_board);
+    m_AiPlayer.setState(m_board);
 
     loadBoard();
 }

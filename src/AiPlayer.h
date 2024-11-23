@@ -1,7 +1,7 @@
 #pragma once
 #include "Utils.h"
 #include "BoardSquare.h"
-#include "BoardState.h"
+#include "Board.h"
 #include "SFML/Graphics.hpp"
 #include <optional>
 
@@ -11,11 +11,11 @@ class AiPlayer
 {
 public:
     AiPlayer() = delete;
-    AiPlayer(BoardState* const boardState);
+    AiPlayer(Board& boardState);
 
     BoardSquare::Peices aiPeice{ BoardSquare::Peices::O };
 
-    void setState(BoardState* const boardState);
+    void setState(Board& boardState);
 
     sf::Vector2i getMove();        // make a move based on the current difficulty level
     sf::Vector2i randomMove();
@@ -25,5 +25,5 @@ private:
 
     int m_skill{0};        // holds the difficulty level (0-5)
     //we will see if this works
-    BoardState* m_aiBoardState;
+    Board& m_aiBoardState;
 };

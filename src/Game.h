@@ -2,7 +2,7 @@
 #include "SFML/Graphics.hpp"
 #include "TileResources.h"
 #include "BoardSquare.h"
-#include "BoardState.h"
+#include "Board.h"
 #include "GridDim.h"
 #include "AiPlayer.h"
 #include <array>
@@ -29,7 +29,7 @@ private:
     std::optional<BoardSquare::Peices> checkVictory();
 
     sf::RenderWindow m_window{};
-    BoardState m_board{};        // holds the state of the board and the peices
+    Board m_board{};        // holds the state of the board and the peices
     BoardSquare::Peices m_turn{ BoardSquare::Peices::X };        // default is for X to start
     BoardSquare::Peices m_playerPeice{ BoardSquare::Peices::X };
     sf::Clock m_deltaClock{};

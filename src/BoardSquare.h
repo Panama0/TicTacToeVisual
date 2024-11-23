@@ -18,7 +18,7 @@ public:
     
     void load(const char* path);
 
-    sf::Sprite& getSpr() { return m_obj.sprite; };
+    sf::Sprite& getSprite() { return m_obj.sprite; };
 private:
     GameObj m_obj;
 };
