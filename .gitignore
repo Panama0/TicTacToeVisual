@@ -17,7 +17,8 @@
 /.vs
 
 #build
-/bin/*.exe
-/bin/*.pdb
-/bin/obj
-/bin/ImGui
+bin/*.exe
+bin/*.pdb
+bin/*.lib
+bin/obj
+bin/ImGui
