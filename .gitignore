@@ -22,3 +22,4 @@ bin/*.pdb
 bin/*.lib
 bin/obj
 bin/ImGui
+/TicTacToeVisual.sln
