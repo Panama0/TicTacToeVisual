@@ -12,9 +12,10 @@
 *filters
 
 #vs files
-/*.sln
-/*.vcxproj
+*.sln
+/**.vcxproj
 /.vs
+
 
 #build
 bin/*.exe
@@ -23,3 +24,9 @@ bin/*.lib
 bin/obj
 bin/ImGui
 
+
+/TicTacToeVisual.vcxproj
+/TicTacToeVisual.vcxproj.filters
+/lib/imgui/ImGui.vcxproj
+/lib/imgui/ImGui.vcxproj.filters
+/bin/TicTacToeVisual.exe
