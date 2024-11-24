@@ -9,7 +9,7 @@ public:
 
     void loadTexture(std::string_view path);
 
-    sf::Rect<float>& getClickbox();
+    //sf::Rect<float>& getClickbox();
 private:
     sf::Texture m_texture;
 };

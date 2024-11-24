@@ -37,7 +37,9 @@ void Game::run()
     {
         //process input
         handleInput();
-        //update stuff
+        
+
+
         
         //TODO: move the below
         if (m_turn == BoardSquare::Peices::O)
@@ -76,7 +78,7 @@ void Game::handleInput()
             for (int i{}; i < 9; i++)
             {
                 //check if click collides
-                CurrentTileBounds = m_resources.tiles[i].getClickbox();
+                CurrentTileBounds = m_board.getClickbox(i);
                 if (CurrentTileBounds.contains(mousePos))
                 {
                     clickCoords = Utils::remap1Dto2D(i);
@@ -99,7 +101,7 @@ void Game::handleInput()
 
             for (int i{}; i < 9; i++)
             {
-                sf::FloatRect bounds{ m_resources.tiles[i].getClickbox()};
+                sf::FloatRect bounds{ m_board.getClickbox(i) };
                 if (bounds.contains(mousePos))
                 {
                     m_resources.highlight.setSize({ bounds.height, bounds.width });
@@ -193,12 +195,12 @@ void Game::loadBoard()
     const sf::Vector2f offset{ static_cast<float>(GridDim::colWidth + m_window.getSize().x/2 - (GridDim::gridSize * GridDim::spriteSize)/2),
                                static_cast<float>(GridDim::colWidth + m_window.getSize().y/2 - (GridDim::gridSize * GridDim::spriteSize)/2)};
 
-    for (int x{}; x < 3; x++)
+    for (int y{}; y < 3; y++)
     {
-        for (int y{}; y < 3; y++)
+        for (int x{}; x < 3; x++)
         {
-            m_board.setPosition({ x,y }, { offset.x + y * (GridDim::spriteSize - GridDim::colWidth),
-                                           offset.y + x * (GridDim::spriteSize - GridDim::colWidth) });
+            m_board.setPosition({ x,y }, { offset.x + x * (GridDim::spriteSize - GridDim::colWidth),
+                                           offset.y + y * (GridDim::spriteSize - GridDim::colWidth) });
         }
     }
 
@@ -214,13 +216,27 @@ void Game::loadBoard()
     }
 }
 
-//this thing sucks
 void Game::placePeice(BoardSquare::Peices peice, sf::Vector2i location)
 {
     //TODO: not actually using the optional here lul
     m_board.setState(location, peice);
-
     m_board.load(location, *getPath(peice));
+    
+    
+    m_turnCount++;
+    if (m_turnCount >= 9)
+    {
+        std::cout << "Its a draw";
+    }
+
+    if (auto victor = checkVictory())
+    {
+        if (victor == BoardSquare::Peices::empty)
+        {
+            std::cout << "Its a draw";
+        }
+        std::cout << "someone won";
+    }
 }
 
 void Game::makeAiMove()
@@ -228,24 +244,98 @@ void Game::makeAiMove()
     placePeice(m_AiPlayer.aiPeice, m_AiPlayer.getMove());
 }
 
-std::optional<BoardSquare::Peices> Game::checkVictory()        // returns nullopt if no victor, returns true if player won, false if lost
+std::optional<BoardSquare::Peices> Game::checkVictory()        // returns nullopt if no victor, otherwise returns the player that won.
 {
+    const BoardSquare::Peices opponentPeice{ m_playerPeice == BoardSquare::Peices::X ? BoardSquare::Peices::O : BoardSquare::Peices::X };
+
     //vertical
-    for (int x{}; x < 3; x++)
+    for (int x{}, pSum{}, oSum{}; x < 3; x++, pSum = 0, oSum = 0)
     {
-        int sum{};
         for (int y{}; y < 3; y++)
         {
             if (m_board.getState({x,y}) == m_playerPeice)
             {
-                sum++;
+                pSum++;
+            }
+            else if (m_board.getState({ x,y }) == opponentPeice)
+            {
+                oSum++;
             }
         }
-        if (sum == 3)
+        if (pSum == 3)
         {
             return m_playerPeice;
         }
+        else if (oSum == 3)
+        {
+            return opponentPeice;
+        }
     }
+    //horizontal
+    for (int y{}, pSum{}, oSum{}; y < 3; y++, pSum = 0, oSum = 0)
+    {
+        for (int x{}; x < 3; x++)
+        {
+            if (m_board.getState({ x,y }) == m_playerPeice)
+            {
+                pSum++;
+            }
+            else if (m_board.getState({ x,y }) == opponentPeice)
+            {
+                oSum++;
+            }
+        }
+        if (pSum == 3)
+        {
+            return m_playerPeice;
+        }
+        else if (oSum == 3)
+        {
+            return opponentPeice;
+        }
+    }
+    //diagonal
+    for (int i{}, pSum{}, oSum{}; i < 8; i += 4, pSum = 0, oSum = 0)
+    {
+        if (m_board.getState(i) == m_playerPeice)
+        {
+            pSum++;
+        }
+        else if (m_board.getState(i) == opponentPeice)
+        {
+            oSum++;
+        }
+
+        if (pSum == 3)
+        {
+            return m_playerPeice;
+        }
+        else if (oSum == 3)
+        {
+            return opponentPeice;
+        }
+    }
+    for (int i{2}, pSum{}, oSum{}; i < 6; i += 2, pSum = 0, oSum = 0)
+    {
+        if (m_board.getState(i) == m_playerPeice)
+        {
+            pSum++;
+        }
+        else if (m_board.getState(i) == opponentPeice)
+        {
+            oSum++;
+        }
+
+        if (pSum == 3)
+        {
+            return m_playerPeice;
+        }
+        else if (oSum == 3)
+        {
+            return opponentPeice;
+        }
+    }
+
 
     return std::nullopt;
 }
@@ -255,6 +345,7 @@ void Game::reset()
     //reset board
     this->m_board = {};
     m_turn = BoardSquare::Peices::X;
+    this->m_turnCount = {};
 
     //reset ai
     m_AiPlayer.setState(m_board);

@@ -17,8 +17,13 @@ public:
 
     void setPosition(const sf::Vector2i location, const sf::Vector2f position);
     const sf::Vector2f getPosition(const sf::Vector2i location);
+    const sf::FloatRect& getClickbox(const sf::Vector2i location);
+    const sf::FloatRect& getClickbox(const int location);
 
     const sf::Sprite& getSpr(const sf::Vector2i location);
+
+    void loadDebug();
+
 private:
     std::array<BoardSquare,9> m_board;
 };
