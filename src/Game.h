@@ -34,6 +34,9 @@ private:
     BoardSquare::Peices m_turn{ BoardSquare::Peices::X };        // default is for X to start
     int m_turnCount{};
     BoardSquare::Peices m_playerPeice{ BoardSquare::Peices::X };
+    
+    std::optional<BoardSquare::Peices> m_winner{std::nullopt};       //null is no winner
+
     sf::Clock m_deltaClock{};
 
     AiPlayer m_AiPlayer;

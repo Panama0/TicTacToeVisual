@@ -27,37 +27,16 @@ Game::Game()
 
 void Game::run()
 {
-    //we must move this
-    std::chrono::steady_clock::time_point start;
-    std::chrono::milliseconds waitTime{ 500 };
-
-    bool waitFlag{ true };
+    
 
     while (m_window.isOpen())
     {
-        //process input
+        //process input - player move
         handleInput();
-        
-
-
-        
-        //TODO: move the below
-        if (m_turn == BoardSquare::Peices::O)
+        // make ai move if it is its turn and game is still going
+        if (m_turn == BoardSquare::Peices::O && m_winner == std::nullopt)
         {
-            if (waitFlag)
-            {
-                start = std::chrono::steady_clock::now();
-                waitFlag = false;
-            }
-            auto now{ std::chrono::steady_clock::now() };
-            if ((now - start) > waitTime)
-            {
-                makeAiMove();
-                m_turn = BoardSquare::Peices::X;
-                waitFlag = true;
-                //random duration each time for better feel
-                waitTime = std::chrono::milliseconds(Utils::getRandomNumber(100, 750));
-            }
+            makeAiMove();
         }
         //draw stuff
         draw();
@@ -224,29 +203,54 @@ void Game::placePeice(BoardSquare::Peices peice, sf::Vector2i location)
     
     
     m_turnCount++;
-    if (m_turnCount >= 9)
+    m_winner = checkVictory();
+    if (m_winner == BoardSquare::Peices::X)
     {
-        std::cout << "Its a draw";
+        std::cout << "X won";
     }
-
-    if (auto victor = checkVictory())
+    else if (m_winner == BoardSquare::Peices::O)
     {
-        if (victor == BoardSquare::Peices::empty)
-        {
-            std::cout << "Its a draw";
-        }
-        std::cout << "someone won";
+        std::cout << "O won";
     }
 }
 
 void Game::makeAiMove()
 {
-    placePeice(m_AiPlayer.aiPeice, m_AiPlayer.getMove());
+    static bool waitFlag{ true };
+    static std::chrono::steady_clock::time_point start;
+    static std::chrono::milliseconds waitTime{ 500 };
+
+
+    //TODO: move the below
+
+    if (waitFlag)
+    {
+        start = std::chrono::steady_clock::now();
+        waitFlag = false;
+    }
+    auto now{ std::chrono::steady_clock::now() };
+    if ((now - start) > waitTime)
+    {
+        placePeice(m_AiPlayer.aiPeice, m_AiPlayer.getMove());
+        m_turn = BoardSquare::Peices::X;
+        waitFlag = true;
+        //random duration each time for better feel
+        waitTime = std::chrono::milliseconds(Utils::getRandomNumber(100, 1000));
+    }
 }
 
 std::optional<BoardSquare::Peices> Game::checkVictory()        // returns nullopt if no victor, otherwise returns the player that won.
 {
     const BoardSquare::Peices opponentPeice{ m_playerPeice == BoardSquare::Peices::X ? BoardSquare::Peices::O : BoardSquare::Peices::X };
+
+
+    //check draw
+    if (m_turnCount >= 9)
+    {
+        std::cout << "Its a draw";
+        return BoardSquare::Peices::empty;
+    }
+
 
     //vertical
     for (int x{}, pSum{}, oSum{}; x < 3; x++, pSum = 0, oSum = 0)
@@ -349,6 +353,12 @@ void Game::reset()
 
     //reset ai
     m_AiPlayer.setState(m_board);
+
+    for (int i{}; i < 5; i++)
+    {
+        std::cout << std::endl;
+    }
+    std::cout << "__________New Game__________" << std::endl;
 
     loadBoard();
 }
