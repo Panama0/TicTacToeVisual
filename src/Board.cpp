@@ -62,11 +62,11 @@ const sf::Sprite& Board::getSpr(const sf::Vector2i location)
 
 void Board::loadDebug()
 {
-    //m_board[2].squareState = BoardSquare::Peices::X;
-    //m_board[4].squareState = BoardSquare::Peices::X;
-    //m_board[6].squareState = BoardSquare::Peices::X;
+    m_board[2].squareState = BoardSquare::Peices::X;
+    m_board[4].squareState = BoardSquare::Peices::X;
+    m_board[6].squareState = BoardSquare::Peices::X;
 
-    m_board[2].squareState = BoardSquare::Peices::O;
-    m_board[4].squareState = BoardSquare::Peices::O;
-    m_board[6].squareState = BoardSquare::Peices::O;
+    //m_board[2].squareState = BoardSquare::Peices::O;
+    //m_board[4].squareState = BoardSquare::Peices::O;
+    //m_board[6].squareState = BoardSquare::Peices::O;
 }

@@ -27,8 +27,6 @@ Game::Game()
 
 void Game::run()
 {
-    
-
     while (m_window.isOpen())
     {
         //process input - player move
@@ -139,17 +137,13 @@ void Game::drawUI()
 
 void Game::drawBoard()
 {
+    for (int x{}, k{}; x < 3; x++, k++)
     {
-        int k{};
-        for (int x{}; x < 3; x++)
+        for (int y{}; y < 3; y++)
         {
-            for (int y{}; y < 3; y++)
-            {
-                //TODO: move the set pos to some kind of update
-                m_resources.tiles[k].sprite.setPosition(m_board.getPosition({x,y}));
-                m_window.draw(m_resources.tiles[k].sprite);
-                k++;
-            }
+            //TODO: move the set pos to some kind of update
+            m_resources.tiles[k].sprite.setPosition(m_board.getPosition({x,y}));
+            m_window.draw(m_resources.tiles[k].sprite);
         }
     }
 }
@@ -299,7 +293,7 @@ std::optional<BoardSquare::Peices> Game::checkVictory()        // returns nullop
         }
     }
     //diagonal
-    for (int i{}, pSum{}, oSum{}; i < 8; i += 4, pSum = 0, oSum = 0)
+    for (int i{}, pSum{}, oSum{}; i <= 8; i += 4)
     {
         if (m_board.getState(i) == m_playerPeice)
         {
@@ -319,7 +313,7 @@ std::optional<BoardSquare::Peices> Game::checkVictory()        // returns nullop
             return opponentPeice;
         }
     }
-    for (int i{2}, pSum{}, oSum{}; i < 6; i += 2, pSum = 0, oSum = 0)
+    for (int i{2}, pSum{}, oSum{}; i <= 6; i += 2)
     {
         if (m_board.getState(i) == m_playerPeice)
         {
