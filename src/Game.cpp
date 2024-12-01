@@ -27,6 +27,9 @@ Game::Game()
 
 void Game::run()
 {
+    m_board.loadDebug();
+    auto a = m_AiPlayer.createFork(m_playerPeice);
+
     while (m_window.isOpen())
     {
         //process input - player move
@@ -344,9 +347,6 @@ void Game::reset()
     this->m_board = {};
     m_turn = BoardSquare::Peices::X;
     this->m_turnCount = {};
-
-    //reset ai
-    m_AiPlayer.setState(m_board);
 
     for (int i{}; i < 5; i++)
     {

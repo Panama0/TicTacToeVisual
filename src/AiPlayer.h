@@ -4,6 +4,7 @@
 #include "Board.h"
 #include "SFML/Graphics.hpp"
 #include <optional>
+#include <vector>
 
 
 //idea is to be able to have 2 of these for ai vs ai matches.
@@ -15,11 +16,11 @@ public:
 
     BoardSquare::Peices aiPeice{ BoardSquare::Peices::O };
 
-    void setState(Board& boardState);
-
     sf::Vector2i getMove();        // make a move based on the current difficulty level
     sf::Vector2i randomMove();
-    std::optional<sf::Vector2i> immidiateWin(BoardSquare::Peices player);
+    std::optional<sf::Vector2i> immidiateWin(BoardSquare::Peices playerPeice);
+    std::optional<std::vector<sf::Vector2i>> unblockedLines(BoardSquare::Peices playerPeice, const Board::BoardState& state);
+    std::optional<sf::Vector2i> createFork(BoardSquare::Peices playerPeice);
 
 private:
 

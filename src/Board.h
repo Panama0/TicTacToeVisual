@@ -6,10 +6,11 @@
 class Board
 {
 public:
-    // this will save us putting .board.state everywhere
-    //can also add another member function to get the 
+    using BoardState = std::array<BoardSquare::Peices, 9>;
+
     BoardSquare::Peices getState(const sf::Vector2i location);
     BoardSquare::Peices getState(const int location);
+    const BoardState& getState();
 
     void setState(const sf::Vector2i location, BoardSquare::Peices peice);
     void setState(const int location, BoardSquare::Peices peice);

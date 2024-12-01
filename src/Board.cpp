@@ -12,6 +12,17 @@ BoardSquare::Peices Board::getState(const int location)
     return m_board[location].squareState;
 }
 
+const Board::BoardState& Board::getState()
+{
+    Board::BoardState state{};
+
+    for (size_t i{}; i < state.size(); i++)
+    {
+        state[i] = getState(i);
+    }
+    return state;
+}
+
 void Board::setState(const sf::Vector2i location, BoardSquare::Peices peice)
 {
     m_board[Utils::remap2Dto1D(location)].squareState = peice;
@@ -62,9 +73,21 @@ const sf::Sprite& Board::getSpr(const sf::Vector2i location)
 
 void Board::loadDebug()
 {
-    m_board[2].squareState = BoardSquare::Peices::X;
+    m_board[0].squareState = BoardSquare::Peices::empty;
+    m_board[1].squareState = BoardSquare::Peices::empty;
+    m_board[2].squareState = BoardSquare::Peices::empty;
+    m_board[3].squareState = BoardSquare::Peices::empty;
+    m_board[4].squareState = BoardSquare::Peices::empty;
+    m_board[5].squareState = BoardSquare::Peices::empty;
+    m_board[6].squareState = BoardSquare::Peices::empty;
+    m_board[7].squareState = BoardSquare::Peices::empty;
+    m_board[8].squareState = BoardSquare::Peices::empty;
+
+
+
+    m_board[0].squareState = BoardSquare::Peices::X;
     m_board[4].squareState = BoardSquare::Peices::X;
-    m_board[6].squareState = BoardSquare::Peices::X;
+    //m_board[3].squareState = BoardSquare::Peices::empty;
 
     //m_board[2].squareState = BoardSquare::Peices::O;
     //m_board[4].squareState = BoardSquare::Peices::O;
