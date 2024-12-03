@@ -21,6 +21,7 @@ public:
     std::optional<sf::Vector2i> immidiateWin(BoardSquare::Peices playerPeice);
     std::optional<std::vector<sf::Vector2i>> unblockedLines(BoardSquare::Peices playerPeice, const Board::BoardState& state);
     std::optional<sf::Vector2i> createFork(BoardSquare::Peices playerPeice);
+    std::optional<sf::Vector2i> playCenter();
 
 private:
 

@@ -20,22 +20,24 @@ sf::Vector2i AiPlayer::getMove()
 
     std::optional<sf::Vector2i> move;
 
-    //TODO: make the below more scalable, endless ifs cant be the best way to go
     if (!(move = immidiateWin(aiPeice)))
     {
         if (!(move = immidiateWin(opponentPeice)))
         {
-            return randomMove();
-        }
-        else
-        {
-            return *move;
+            if (!(move = createFork(aiPeice)))
+            {
+                if (!(move = createFork(opponentPeice)))
+                {
+                    if (!(move = playCenter()))
+                    {
+                        move = randomMove();
+                    }
+                }
+            }
         }
     }
-    else
-    {
-        return *move;
-    }
+
+    return *move;
 }
 
 sf::Vector2i AiPlayer::randomMove()
@@ -310,4 +312,16 @@ std::optional<sf::Vector2i> AiPlayer::createFork(BoardSquare::Peices playerPeice
     }
 
     return std::nullopt;
+}
+
+std::optional<sf::Vector2i> AiPlayer::playCenter()
+{
+    if (m_aiBoardState.getState(4) == BoardSquare::Peices::empty)
+    {
+        return { { 1,1 } };
+    }
+    else
+    {
+        return std::nullopt;
+    }
 }

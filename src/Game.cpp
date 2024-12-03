@@ -27,8 +27,8 @@ Game::Game()
 
 void Game::run()
 {
-    m_board.loadDebug();
-    auto a = m_AiPlayer.createFork(m_playerPeice);
+    //m_board.loadDebug();
+    //auto a = m_AiPlayer.createFork(m_playerPeice);
 
     while (m_window.isOpen())
     {
