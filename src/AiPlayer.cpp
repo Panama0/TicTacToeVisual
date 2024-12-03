@@ -4,13 +4,13 @@
 #include "GridDim.h"
 #include "Utils.h"
 #include "SFML/Graphics.hpp"
-#include <random>
 #include <optional>
 #include <vector>
 
 
-AiPlayer::AiPlayer(Board& boardState)
+AiPlayer::AiPlayer(Board& boardState, const int skill)
     :m_aiBoardState{ boardState }
+    ,m_skill{skill}
 {
 }
 
@@ -56,109 +56,14 @@ sf::Vector2i AiPlayer::randomMove()
 //search for 2 in a row and then return the move if it can be made
 std::optional<sf::Vector2i>  AiPlayer::immidiateWin(BoardSquare::Peices playerPeice)
 {
-    int playerCount{};
-    int opponentCount{};
-
-    const BoardSquare::Peices opponentPeice{ playerPeice == BoardSquare::Peices::X ? BoardSquare::Peices::O : BoardSquare::Peices::X };
-
-    std::optional<sf::Vector2i> move{ {0,0} };
-
-    //vertical
-    for (int y{}; y < 3; y++)
+    if (auto move = unblockedLines(playerPeice, m_aiBoardState.getState()))
     {
-        for (int x{}; x < 3; x++)
-        {
-            if (m_aiBoardState.getState({x,y}) == playerPeice)
-            {
-                playerCount++;
-            }
-            else if (m_aiBoardState.getState({x,y}) == opponentPeice)
-            {
-                opponentCount++;
-            }
-            else if (m_aiBoardState.getState({x,y}) == BoardSquare::Peices::empty)
-            {
-                //save the blank spot
-                move = { x , y };
-            }
-        }
-        if (playerCount > 1 && opponentCount < 1)
-        {        // if theres 2 O and no X present
-            return move;
-        }
-        playerCount = 0;
-        opponentCount = 0;
+        return (*move).front();
     }
-
-    //horizontal
-    for (int x{}; x < 3; x++)
+    else
     {
-        for (int y{}; y < 3; y++)
-        {
-            if (m_aiBoardState.getState({x,y}) == playerPeice)
-            {
-                playerCount++;
-            }
-            else if (m_aiBoardState.getState({x,y}) == opponentPeice)
-            {
-                opponentCount++;
-            }
-            else if (m_aiBoardState.getState({x,y}) == BoardSquare::Peices::empty)
-            {
-                //save the blank spot
-                move = { x , y };
-            }
-        }
-        if (playerCount > 1 && opponentCount < 1)
-        {    // if theres 2 O and no X present
-            return move;
-        }
-        playerCount = 0;
-        opponentCount = 0;
+        return std::nullopt;
     }
-
-    //diag right
-    for (int i{}; i < 3; i++)
-    {
-        if (m_aiBoardState.getState({i,i}) == playerPeice)
-        {
-            playerCount++;
-        } 
-        else if (m_aiBoardState.getState({i,i}) == opponentPeice)
-        {
-            opponentCount++;
-        }
-        else if (m_aiBoardState.getState({i,i}) == BoardSquare::Peices::empty)
-        {
-            move = { i, i };
-        }
-    }
-    if (playerCount > 1 && opponentCount < 1)    // if theres 2 O and no X present
-    {
-        return move;
-    }
-    playerCount = 0;
-    opponentCount = 0;
-
-    //diag left
-    for (int x{}, y{ 2 }; x < 3; x++, y--) {
-        if (m_aiBoardState.getState({x,y}) == playerPeice) {
-            playerCount++;
-        }
-        else if (m_aiBoardState.getState({x,y}) == opponentPeice) {
-            opponentCount++;
-        }
-        else if (m_aiBoardState.getState({x,y}) == BoardSquare::Peices::empty)
-        {
-            move = { x , y };
-        }
-    }
-    if (playerCount > 1 && opponentCount < 1) {        // if theres 2 O and no X present
-        return move;
-    }
-
-    //no move was found
-    return std::nullopt;
 }
 
 std::optional<std::vector<sf::Vector2i>> AiPlayer::unblockedLines(BoardSquare::Peices playerPeice, const Board::BoardState& state)
@@ -278,18 +183,6 @@ std::optional<std::vector<sf::Vector2i>> AiPlayer::unblockedLines(BoardSquare::P
 
 std::optional<sf::Vector2i> AiPlayer::createFork(BoardSquare::Peices playerPeice)
 {
-    //make first available move
-    // check for nonblocked lines of 2
-    //if there's 2 then its the move
-
-    //immieate win made into new function. new one would have to retuern multiple/all of the moves. 
-    // this funct could then use the length of that array/vector to determine if theres a createFork
-    //temp state would be needed here same as last time
-
-    //imm win would hten just get the first one
-
-    // or split each part of imm win out into seperate function. then have logic for form in the createFork function onyl
-
     Board::BoardState tempState = m_aiBoardState.getState();
 
     for (size_t i{}; i < tempState.size(); i++)

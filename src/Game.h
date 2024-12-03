@@ -3,9 +3,7 @@
 #include "TileResources.h"
 #include "BoardSquare.h"
 #include "Board.h"
-#include "GridDim.h"
 #include "AiPlayer.h"
-#include <array>
 #include <optional>
 
 class Game
@@ -40,6 +38,7 @@ private:
     sf::Clock m_deltaClock{};
 
     AiPlayer m_AiPlayer;
+    int m_difficulty{1};     //difficulty 1-5
 
     tileResources m_resources;
 };

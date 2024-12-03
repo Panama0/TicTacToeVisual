@@ -14,7 +14,7 @@
 
 
 Game::Game()
-    :m_AiPlayer{m_board}
+    :m_AiPlayer{m_board, m_difficulty}
 {
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
@@ -27,9 +27,6 @@ Game::Game()
 
 void Game::run()
 {
-    //m_board.loadDebug();
-    //auto a = m_AiPlayer.createFork(m_playerPeice);
-
     while (m_window.isOpen())
     {
         //process input - player move
@@ -62,7 +59,7 @@ void Game::handleInput()
                 if (CurrentTileBounds.contains(mousePos))
                 {
                     clickCoords = Utils::remap1Dto2D(i);
-                    if (m_turn == BoardSquare::Peices::X && m_board.getState(clickCoords) == BoardSquare::Peices::empty)
+                    if (m_turn == BoardSquare::Peices::X && m_board.getState(clickCoords) == BoardSquare::Peices::empty && m_winner == std::nullopt)
                     {
                         placePeice(BoardSquare::Peices::X, clickCoords);
                         m_turn = BoardSquare::Peices::O;
@@ -347,6 +344,7 @@ void Game::reset()
     this->m_board = {};
     m_turn = BoardSquare::Peices::X;
     this->m_turnCount = {};
+    this->m_winner = {};
 
     for (int i{}; i < 5; i++)
     {
