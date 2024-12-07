@@ -25,6 +25,8 @@ public:
 
     void loadDebug();
 
+    sf::Text winnerDisplay{};
+
 private:
     std::array<BoardSquare,9> m_board;
 };

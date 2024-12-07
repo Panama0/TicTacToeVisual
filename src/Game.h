@@ -12,11 +12,12 @@ public:
     Game();
 
     void run();
-    void reset();
+    void reset(bool resetDifficulty);
 
     std::optional<const char*> getPath(BoardSquare::Peices asset);
 private:
     void handleInput();
+    void updateText();
     void draw();
     void drawUI();
     void drawBoard();
@@ -25,6 +26,7 @@ private:
     void placePeice(BoardSquare::Peices peice, sf::Vector2i location);
     void makeAiMove();
     std::optional<BoardSquare::Peices> checkVictory();
+    void endGame();
 
 
     sf::RenderWindow m_window{};
@@ -41,4 +43,5 @@ private:
     int m_difficulty{1};     //difficulty 1-5
 
     tileResources m_resources;
+    sf::Font m_font;
 };

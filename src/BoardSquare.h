@@ -11,6 +11,7 @@ public:
         X,
         O,
         tile,
+        font,
     };
 
     Peices squareState{ Peices::empty };

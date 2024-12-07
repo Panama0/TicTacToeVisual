@@ -8,7 +8,7 @@
 #include <vector>
 
 
-AiPlayer::AiPlayer(Board& boardState, const int skill)
+AiPlayer::AiPlayer(Board& boardState, const int& skill)
     :m_aiBoardState{ boardState }
     ,m_skill{skill}
 {
@@ -19,6 +19,14 @@ sf::Vector2i AiPlayer::getMove()
     const BoardSquare::Peices opponentPeice{ aiPeice == BoardSquare::Peices::X ? BoardSquare::Peices::O : BoardSquare::Peices::X };
 
     std::optional<sf::Vector2i> move;
+    //skill check
+
+    if (m_skill <= Utils::getRandomNumber(1, 4))
+    {
+        move = randomMove();
+        return *move;
+    }
+
 
     if (!(move = immidiateWin(aiPeice)))
     {

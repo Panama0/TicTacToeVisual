@@ -9,6 +9,7 @@
 #include <iostream>
 #include <optional>
 #include <chrono>
+#include <cassert>
 
 
 
@@ -16,10 +17,7 @@
 Game::Game()
     :m_AiPlayer{m_board, m_difficulty}
 {
-    sf::ContextSettings settings;
-    settings.antialiasingLevel = 8;
-
-    m_window.create(sf::VideoMode(1000, 1000), "Tic Tac Toe", 7U, settings);
+    m_window.create(sf::VideoMode(1000, 1000), "Tic Tac Toe", 7U);
     ImGui::SFML::Init(m_window);
 
     loadBoard();
@@ -102,6 +100,15 @@ void Game::handleInput()
     }
 }
 
+void Game::updateText()
+{
+    const sf::Vector2f offset{-m_board.winnerDisplay.getGlobalBounds().width / 2, 
+                              -m_board.winnerDisplay.getGlobalBounds().height / 2 };
+    const float midpointY{ (GridDim::colWidth + m_window.getSize().y / 2 - (GridDim::gridSize * GridDim::spriteSize) / 2 ) / 2};
+
+    m_board.winnerDisplay.setPosition(offset.x + m_window.getSize().x / 2, offset.y + midpointY);
+}
+
 void Game::draw()
 {    
     m_window.clear({120,120,120});
@@ -109,12 +116,14 @@ void Game::draw()
     drawUI();
     drawPeices();
     m_window.draw(m_resources.highlight);
+    m_window.draw(m_board.winnerDisplay);
     m_window.display();
 }
 
 void Game::drawUI()
 {
     ImGui::SFML::Update(m_window, m_deltaClock.restart());
+    updateText();
 
     if (ImGui::BeginMainMenuBar())
     {
@@ -122,7 +131,7 @@ void Game::drawUI()
         {
             if (ImGui::MenuItem("New Game"))
             {
-                reset();
+                reset(true);
             }
             if (ImGui::MenuItem("Exit"))
             {
@@ -132,6 +141,39 @@ void Game::drawUI()
         }
         ImGui::EndMainMenuBar();
     }
+
+    if (m_winner)
+    {
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, {1000.f,80.f});
+        ImGui::Begin("Game Over");
+
+        if (*m_winner == m_playerPeice)
+        {
+            m_board.winnerDisplay.setString("You Won!");
+        }
+        else if (*m_winner != BoardSquare::Peices::empty)
+        {
+            m_board.winnerDisplay.setString("You Lost :(");
+        }
+        else
+        {
+            m_board.winnerDisplay.setString("It's a Draw");
+        }
+        
+
+        if (ImGui::Button("Continue", { 1000.f,80.f }))
+        {
+            //reset but keep the difficulty state
+            reset(false);
+        }
+
+        ImGui::End();
+        ImGui::PopStyleVar();
+    }
+
+
+
+
     ImGui::SFML::Render(m_window);
 }
 
@@ -165,17 +207,26 @@ void Game::drawPeices()
 
 void Game::loadBoard()
 {
-    const sf::Vector2f offset{ static_cast<float>(GridDim::colWidth + m_window.getSize().x/2 - (GridDim::gridSize * GridDim::spriteSize)/2),
-                               static_cast<float>(GridDim::colWidth + m_window.getSize().y/2 - (GridDim::gridSize * GridDim::spriteSize)/2)};
+    const sf::Vector2f tileOffset{ static_cast<float>(GridDim::colWidth + m_window.getSize().x/2 - (GridDim::gridSize * GridDim::spriteSize)/2),
+                                   static_cast<float>(GridDim::colWidth + m_window.getSize().y/2 - (GridDim::gridSize * GridDim::spriteSize)/2)};
 
     for (int y{}; y < 3; y++)
     {
         for (int x{}; x < 3; x++)
         {
-            m_board.setPosition({ x,y }, { offset.x + x * (GridDim::spriteSize - GridDim::colWidth),
-                                           offset.y + y * (GridDim::spriteSize - GridDim::colWidth) });
+            m_board.setPosition({ x,y }, { tileOffset.x + x * (GridDim::spriteSize - GridDim::colWidth),
+                                           tileOffset.y + y * (GridDim::spriteSize - GridDim::colWidth) });
         }
     }
+
+    //load the text that displays the winner
+
+    if (m_font.loadFromFile(*getPath(BoardSquare::Peices::font)))
+    {
+        m_board.winnerDisplay.setFont(m_font);
+    }
+    
+    m_board.winnerDisplay.setString("Difficulty: " + std::to_string(m_difficulty));
 
     //TODO:move to tileresources
     std::optional<std::string> path;
@@ -197,14 +248,10 @@ void Game::placePeice(BoardSquare::Peices peice, sf::Vector2i location)
     
     
     m_turnCount++;
-    m_winner = checkVictory();
-    if (m_winner == BoardSquare::Peices::X)
+
+    if (m_winner = checkVictory())
     {
-        std::cout << "X won";
-    }
-    else if (m_winner == BoardSquare::Peices::O)
-    {
-        std::cout << "O won";
+        endGame();
     }
 }
 
@@ -241,7 +288,6 @@ std::optional<BoardSquare::Peices> Game::checkVictory()        // returns nullop
     //check draw
     if (m_turnCount >= 9)
     {
-        std::cout << "Its a draw";
         return BoardSquare::Peices::empty;
     }
 
@@ -338,7 +384,26 @@ std::optional<BoardSquare::Peices> Game::checkVictory()        // returns nullop
     return std::nullopt;
 }
 
-void Game::reset()
+void Game::endGame()
+{
+    if (*m_winner == m_playerPeice)
+    {
+        if (m_difficulty < 5)
+        {
+            m_difficulty++;
+        }
+    }
+    else if (*m_winner != BoardSquare::Peices::empty)
+    {
+        if (m_difficulty > 0)
+        {
+            m_difficulty--;
+        }
+    }
+    assert(m_difficulty > 0 && m_difficulty <= 5);
+}
+
+void Game::reset(bool resetDifficulty = false)
 {
     //reset board
     this->m_board = {};
@@ -346,11 +411,10 @@ void Game::reset()
     this->m_turnCount = {};
     this->m_winner = {};
 
-    for (int i{}; i < 5; i++)
+    if (resetDifficulty)
     {
-        std::cout << std::endl;
+        m_difficulty = 1;
     }
-    std::cout << "__________New Game__________" << std::endl;
 
     loadBoard();
 }
@@ -367,6 +431,9 @@ std::optional<const char*> Game::getPath(BoardSquare::Peices asset)
         break;
     case BoardSquare::Peices::tile:
         return "./res/sq.png";
+        break;
+    case BoardSquare::Peices::font:
+        return "./res/ARLRDBD.TTF";
         break;
     default:
         std::cerr << "Invalid asset, could not get path!";

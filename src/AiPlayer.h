@@ -11,8 +11,8 @@
 class AiPlayer
 {
 public:
-    AiPlayer() = delete;
-    AiPlayer(Board& boardState, const int skill);
+    AiPlayer() = default;
+    AiPlayer(Board& boardState, const int& skill);
 
     BoardSquare::Peices aiPeice{ BoardSquare::Peices::O };
 
@@ -25,7 +25,7 @@ public:
 
 private:
 
-    int m_skill{0};        // holds the difficulty level (1-5)
+    const int& m_skill{};        // holds the difficulty level (1-5)
     //we will see if this works
     Board& m_aiBoardState;
 };
